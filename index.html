@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<!-- iPhone support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Trip Cost">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aircraft Trip Cost</title>
+
+<style>
+:root{
+--bg:#f4f6f9;
+--card:#ffffff;
+--accent:#2563eb;
+--text:#1f2937;
+--muted:#6b7280;
+--border:#e5e7eb;
+}
+
+*{box-sizing:border-box;}
+
+body{
+font-family:-apple-system, Segoe UI, Arial, sans-serif;
+background:var(--bg);
+margin:0;
+color:var(--text);
+line-height:1.4;
+}
+
+.container{
+max-width:480px;
+margin:auto;
+padding:14px 12px 24px;
+}
+
+.card{
+background:white;
+padding:16px;
+border-radius:12px;
+margin-bottom:14px;
+box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+
+h2{margin:6px 0 12px;}
+h3{margin:0 0 10px;font-size:.95rem;}
+
+/* Layout */
+.gridTwo{
+display:flex;
+gap:12px;
+}
+
+.gridTwo > div{
+flex:1;
+min-width:0;
+}
+
+@media(max-width:600px){
+.gridTwo{
+flex-direction:column;
+}
+}
+
+/* Fields */
+.field{
+margin-bottom:14px;
+}
+
+label{
+font-size:.78rem;
+font-weight:600;
+display:block;
+margin-bottom:2px;
+}
+
+.desc{
+font-size:.72rem;
+color:var(--muted);
+margin-bottom:5px;
+}
+
+input{
+width:100%;
+padding:11px;
+border-radius:10px;
+border:1px solid var(--border);
+font-size:.95rem;
+}
+
+/* Crew rows */
+.rowInputs{
+display:flex;
+gap:8px;
+}
+
+.rowInputs input{
+flex:1;
+}
+
+@media(max-width:480px){
+.rowInputs{
+flex-direction:column;
+}
+}
+
+/* Output */
+textarea{
+width:100%;
+height:600px;
+border-radius:10px;
+border:1px solid var(--border);
+padding:12px;
+font-family:monospace;
+font-size:.72rem;
+white-space:pre-wrap;
+word-wrap:break-word;
+overflow-wrap:break-word;
+line-height:1.4;
+}
+
+button{
+width:100%;
+padding:11px;
+border:none;
+border-radius:10px;
+background:var(--accent);
+color:white;
+cursor:pointer;
+margin-bottom:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Aircraft Trip Cost</h2>
+
+<!-- Aircraft + Trip -->
+<div class="card">
+<h3>Aircraft & Trip</h3>
+
+<div class="gridTwo">
+
+<!-- LEFT COLUMN -->
+<div>
+
+<div class="field">
+<label>Flight Hours</label>
+<div class="desc">One-way flight time</div>
+<input id="flightHours" type="number" step="0.1" value="2.5">
+</div>
+
+<div class="field">
+<label>Fuel Burn (lbs/hr)</label>
+<div class="desc">Fuel consumption rate</div>
+<input id="fuelBurn" type="number" step="50" value="1400">
+</div>
+
+<div class="field">
+<label>Fuel Price ($/gal)</label>
+<div class="desc">Jet-A price</div>
+<input id="fuelPrice" type="number" step="0.25" value="7.00">
+</div>
+
+</div>
+
+<!-- RIGHT COLUMN -->
+<div>
+
+<div class="field">
+<label>Trip Days</label>
+<div class="desc">Total trip duration</div>
+<input id="tripDays" type="number" step="1" value="3" min="2" max="100">
+</div>
+
+<div class="field">
+<label>Ground Transport</label>
+<div class="desc">To/from airport or FBO (per trip)</div>
+<input id="groundTransport" type="number" step="5" value="25">
+</div>
+
+<div class="field">
+<label>FBO / Parking</label>
+<div class="desc">Overnight ramp fees</div>
+<input id="parkingFees" type="number" step="25" value="100">
+</div>
+
+</div>
+
+</div>
+</div>
+
+<!-- Crew -->
+<div class="card">
+<h3>Flight Crew</h3>
+
+<div class="field">
+<label>Daily Rate</label>
+<div class="desc">PIC and SIC pay per day</div>
+<div class="rowInputs">
+<input id="crew1Rate" type="number" step="50" value="1000">
+<input id="crew2Rate" type="number" step="50" value="750">
+</div>
+</div>
+
+<div class="field">
+<label>Per Diem</label>
+<div class="desc">Meals and incidentals</div>
+<div class="rowInputs">
+<input id="crew1PD" type="number" step="25" value="100">
+<input id="crew2PD" type="number" step="25" value="100">
+</div>
+</div>
+
+<div class="field">
+<label>Hotel / Night</label>
+<div class="desc">Crew lodging</div>
+<div class="rowInputs">
+<input id="crew1Hotel" type="number" step="25" value="150">
+<input id="crew2Hotel" type="number" step="25" value="150">
+</div>
+</div>
+
+<div class="field">
+<label>Airline Ticket</label>
+<div class="desc">Commercial travel cost (round trip)</div>
+<div class="rowInputs">
+<input id="crew1Ticket" type="number" step="25" value="450">
+<input id="crew2Ticket" type="number" step="25" value="450">
+</div>
+</div>
+
+</div>
+
+<!-- Report -->
+<div class="card">
+<button onclick="copySummary()">Copy Report</button>
+<textarea id="summary"></textarea>
+</div>
+
+</div>
+
+<script>
+function money(v){
+return v.toLocaleString('en-US',{style:'currency',currency:'USD'});
+}
+
+function calc(){
+
+let g=id=>parseFloat(document.getElementById(id).value)||0;
+
+let fh=g('flightHours'), burn=g('fuelBurn'), fp=g('fuelPrice');
+let c1r=g('crew1Rate'), c2r=g('crew2Rate');
+let c1p=g('crew1PD'), c2p=g('crew2PD');
+let c1h=g('crew1Hotel'), c2h=g('crew2Hotel');
+let c1t=g('crew1Ticket'), c2t=g('crew2Ticket');
+
+let days = g('tripDays');
+
+if (days < 2) days = 2;
+if (days > 100) days = 100;
+
+document.getElementById('tripDays').value = days;
+
+let ground = g('groundTransport');
+let fbo = g('parkingFees');
+
+let wt=6.7;
+
+// logic
+let s2PaidDays=Math.min(days,4);
+let s3PaidDays=2;
+
+// fuel
+let gph=burn/wt;
+let fuelHr=gph*fp;
+let legFuel=fh*fuelHr;
+
+// crew
+let crewRate=c1r+c2r;
+let crewPD=c1p+c2p;
+let crewHotel=c1h+c2h;
+
+let picDaily=c1r+c1p;
+let sicDaily=c2r+c2p;
+
+let nights=Math.max(days-1,0);
+
+// scenarios
+let s1Fuel=legFuel*2;
+let s1Crew=(crewRate+crewPD)*days;
+let s1Exp=(crewHotel*nights)+(ground*2)+(fbo*nights);
+let s1=s1Fuel+s1Crew+s1Exp;
+
+let s2Fuel=legFuel*2;
+let s2Crew=(crewRate+crewPD)*s2PaidDays;
+let s2Exp=(crewHotel*2)+(c1t+c2t)+(ground*6)+(fbo*nights);
+let s2=s2Fuel+s2Crew+s2Exp;
+
+let s3Valid = days >= 3;
+let s3Fuel=0;
+let s3Crew=0;
+let s3=0;
+
+if (s3Valid) {
+  s3Fuel = legFuel * 4;
+  s3Crew = (crewRate + crewPD) * s3PaidDays;
+  s3 = s3Fuel + s3Crew;
+} else {
+  s3 = Infinity;
+}
+
+// crew totals
+let picS1=picDaily*days;
+let sicS1=sicDaily*days;
+let picS2=picDaily*s2PaidDays;
+let sicS2=sicDaily*s2PaidDays;
+let picS3=picDaily*s3PaidDays;
+let sicS3=sicDaily*s3PaidDays;
+
+// best
+let arr=[s1,s2,s3];
+let best=arr.indexOf(Math.min(...arr))+1;
+
+// report
+summary.value = `
+TRIP COST COMPARISON
+
+RESULTS
+S1 = ${money(s1)}
+S2 = ${money(s2)}
+S3 = ${s3Valid ? money(s3) : "N/A (min 3 days required)"}
+
+----------------
+ASSUMPTIONS
+----------------
+Trip Days = ${days}
+Overnights = ${nights}
+
+S1 Paid Days = ${days}
+S2 Paid Days = ${s2PaidDays}
+S3 Paid Days = ${s3PaidDays}
+
+Fuel Weight = 6.7 lbs/gal
+
+----------------
+DISCLAIMER
+----------------
+This cost comparison includes fuel costs, crew compensation, and trip-related logistical expenses only.
+
+It does not include additional aircraft operating costs, maintenance, or any dry lease agreement costs.
+
+FBO fees and related services may vary based on individual FBO pricing, promotions, hangar requirements, and fuel purchase minimums that may waive certain fees.
+
+All values presented are estimates.
+
+----------------
+FUEL CALCULATION
+----------------
+${burn} ÷ 6.7 = ${gph.toFixed(2)} gal/hr
+
+${gph.toFixed(2)} × ${fp} = ${money(fuelHr)} per hour
+
+${fh} × ${money(fuelHr)} = ${money(legFuel)} per leg
+
+----------------
+CREW DAILY PAY
+----------------
+PIC = ${money(picDaily)}
+SIC = ${money(sicDaily)}
+
+----------------
+SCENARIO 1
+----------------
+Fuel = ${money(legFuel)} × 2 = ${money(s1Fuel)}
+Crew = ${money(crewRate+crewPD)} × ${days} = ${money(s1Crew)}
+Hotel = ${money(crewHotel)} × ${nights} = ${money(crewHotel*nights)}
+FBO = ${money(fbo)} × ${nights} = ${money(fbo*nights)}
+Ground = ${money(ground)} × 2 = ${money(ground*2)}
+
+TOTAL = ${money(s1)}
+
+PIC = ${money(picS1)}
+SIC = ${money(sicS1)}
+
+----------------
+SCENARIO 2
+----------------
+Fuel = ${money(legFuel)} × 2 = ${money(s2Fuel)}
+Crew = ${money(crewRate+crewPD)} × ${s2PaidDays} = ${money(s2Crew)}
+Hotel = ${money(crewHotel)} × 2 = ${money(crewHotel*2)}
+Airline = ${money(c1t+c2t)}
+Ground = ${money(ground)} × 6 = ${money(ground*6)}
+FBO = ${money(fbo)} × ${nights} = ${money(fbo*nights)}
+
+TOTAL = ${money(s2)}
+
+PIC = ${money(picS2)}
+SIC = ${money(sicS2)}
+
+----------------
+SCENARIO 3
+----------------
+${s3Valid ? `
+Fuel = ${money(legFuel)} × 4 = ${money(s3Fuel)}
+Crew = ${money(crewRate+crewPD)} × ${s3PaidDays} = ${money(s3Crew)}
+
+TOTAL = ${money(s3)}
+
+PIC = ${money(picS3)}
+SIC = ${money(sicS3)}
+` 
+: `Scenario 3 requires a minimum of 3 trip days to calculate repositioning.`}
+
+----------------
+RECOMMENDED
+----------------
+Scenario ${best}
+
+Actual trip costs may vary based on operational factors and vendor pricing at the time of service.
+`;
+}
+
+function copySummary(){
+navigator.clipboard.writeText(summary.value);
+alert("Copied");
+}
+
+document.querySelectorAll("input").forEach(i=>i.addEventListener("input",calc));
+calc();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+</body>
+</html>
